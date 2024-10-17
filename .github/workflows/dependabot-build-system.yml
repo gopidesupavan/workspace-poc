@@ -2,12 +2,9 @@ name: Monitor build-system.requires in pyproject.toml
 
 on:
   schedule:
-    - cron: '*/5 * * * *'  # Run this action every 5 minutes
-  workflow_dispatch:  # Allows you to manually trigger the workflow
-permissions:
-  pull-requests: write
-  issues: write
-  repository-projects: write
+    - cron: '*/5 * * * *'  # Adjust the schedule as necessary (5 min minimum)
+  workflow_dispatch:  # Allows manual triggering of the workflow
+
 jobs:
   check-dependencies:
     runs-on: ubuntu-latest
@@ -28,3 +25,14 @@ jobs:
     - name: Check build-system.requires
       run: |
         python .github/scripts/check_build_system_requires.py
+
+    - name: Push changes
+      env:
+        GH_PAT: ${{ secrets.GH_PAT }}  # Use your PAT from the secret
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git checkout -b "update-build-system-requires"
+        git add pyproject.toml
+        git commit -m "build-system: Update build-system.requires dependencies"
+        git push -u origin update-build-system-requires
