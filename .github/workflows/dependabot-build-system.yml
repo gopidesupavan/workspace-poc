@@ -21,18 +21,3 @@ jobs:
     - name: Install Dependencies
       run: |
         python -m pip install toml requests
-
-    - name: Check build-system.requires
-      run: |
-        python .github/scripts/check_build_system_requires.py
-
-    - name: Push changes
-      env:
-        GH_PAT: ${{ secrets.GH_PAT }}  # Use your PAT from the secret
-      run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git checkout -b "update-build-system-requires"
-        git add pyproject.toml
-        git commit -m "build-system: Update build-system.requires dependencies"
-        git push -u origin update-build-system-requires
