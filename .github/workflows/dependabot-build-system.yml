@@ -2,7 +2,7 @@ name: Monitor build-system.requires in pyproject.toml
 
 on:
   schedule:
-    - cron: '*/5 * * * *'  # Adjust the schedule as necessary (5 min minimum)
+    - cron: '0 0 * * *'  # Adjust the schedule as necessary (5 min minimum)
   workflow_dispatch:  # Allows manual triggering of the workflow
 
 jobs:
