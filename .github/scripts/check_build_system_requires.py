@@ -13,7 +13,7 @@ def get_latest_version(package_name):
 
 def parse_pyproject_toml():
     """Parse the pyproject.toml file and extract build-system.requires"""
-    with open('pyproject.toml', 'r') as f:  # Open in read mode ('r')
+    with open('pyproject.toml', 'r') as f:
         pyproject_data = toml.load(f)
 
     return pyproject_data.get('build-system', {}).get('requires', [])
@@ -35,13 +35,13 @@ def check_and_update_versions():
                 print(f"Updated {package.strip()} to version {latest_version}")
 
     if updated:
-        # First, open pyproject.toml in read mode to load its content
-        with open('pyproject.toml', 'r') as f:  # Correctly open in read mode ('r')
+        # Load and update the pyproject.toml file
+        with open('pyproject.toml', 'r') as f:
             pyproject_data = toml.load(f)
 
-        # Now open pyproject.toml in write mode to update it
-        with open('pyproject.toml', 'w') as f:  # Open in write mode ('w') for dumping
-            pyproject_data['build-system']['requires'] = requires
+        pyproject_data['build-system']['requires'] = requires
+
+        with open('pyproject.toml', 'w') as f:
             toml.dump(pyproject_data, f)
 
         # Commit and create a pull request
