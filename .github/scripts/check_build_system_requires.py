@@ -13,7 +13,7 @@ def get_latest_version(package_name):
 
 def parse_pyproject_toml():
     """Parse the pyproject.toml file and extract build-system.requires"""
-    with open('pyproject.toml', 'r') as f:
+    with open('pyproject.toml', 'r') as f:  # Open in read mode ('r')
         pyproject_data = toml.load(f)
 
     return pyproject_data.get('build-system', {}).get('requires', [])
@@ -35,13 +35,16 @@ def check_and_update_versions():
                 print(f"Updated {package.strip()} to version {latest_version}")
 
     if updated:
-        # Write the updated dependencies back to pyproject.toml
-        with open('pyproject.toml', 'w') as f:
+        # First, open pyproject.toml in read mode to load its content
+        with open('pyproject.toml', 'r') as f:  # Correctly open in read mode ('r')
             pyproject_data = toml.load(f)
+
+        # Now open pyproject.toml in write mode to update it
+        with open('pyproject.toml', 'w') as f:  # Open in write mode ('w') for dumping
             pyproject_data['build-system']['requires'] = requires
             toml.dump(pyproject_data, f)
 
-        # Commit the changes and create a PR
+        # Commit and create a pull request
         subprocess.run(["git", "config", "user.name", "dependabot[bot]"])
         subprocess.run(["git", "config", "user.email", "dependabot@users.noreply.github.com"])
         subprocess.run(["git", "checkout", "-b", "update-build-system-requires"])
@@ -49,7 +52,7 @@ def check_and_update_versions():
         subprocess.run(["git", "push", "origin", "update-build-system-requires"])
         subprocess.run(
             ["gh", "pr", "create", "--title", "build-system: Update build-system.requires dependencies", "--body",
-             "Automated update of build-system.requires"])
+             "Automated update of build-system.requires dependencies."])
     else:
         print("No updates necessary")
 
