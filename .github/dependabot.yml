@@ -1,0 +1,10 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"  # Set this to the directory where your `pyproject.toml` is located
+    schedule:
+      interval: daily  # Adjust as needed (daily, weekly, etc.)
+    ignore:
+      - dependency-name: "*"  # You can specify to ignore certain dependencies if needed
+    commit-message:
+      prefix: "build-system: Bump"  # Customize the PR title if desired

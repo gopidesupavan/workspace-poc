@@ -1,0 +1,27 @@
+name: Monitor build-system.requires in pyproject.toml
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'  # Run this action every 5 minutes
+  workflow_dispatch:  # Allows you to manually trigger the workflow
+
+jobs:
+  check-dependencies:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install toml requests
+
+    - name: Check build-system.requires
+      run: |
+        python .github/scripts/check_build_system_requires.py
