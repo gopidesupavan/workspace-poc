@@ -24,3 +24,7 @@ jobs:
           else
             echo "Default retries for apt-get: $default_retries"
           fi
+      - name: Display Full APT Configuration
+        run: |
+          echo "Dumping full APT configuration:"
+          apt-config dump
