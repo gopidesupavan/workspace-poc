@@ -10,14 +10,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
-
-    - name: Install Dependencies
-      run: |
-        python -m pip install toml requests
+      - name: Display Default APT Retries
+        run: |
+          # Check the default retries value for apt
+          default_retries=$(apt-config dump | grep -i "Acquire::Retries" | awk '{print $2}')
+          
+          # Display the default retries value or a message if not set
+          if [ -z "$default_retries" ]; then
+            echo "Acquire::Retries is not set. The default is likely 0 (no retries)."
+          else
+            echo "Default retries for apt-get: $default_retries"
+          fi
