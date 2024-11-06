@@ -7,9 +7,6 @@ authors = [{name = "Sample", email = "sample.project@example.org"}]
 license = {file = "LICENSE"}
 classifiers = ["License :: OSI Approved :: MIT License"]
 dynamic = ["version", "description"]
-dependencies = [
-   "ansys-templates==0.3.0",
-]
 
 [build-system.requires]
-flit_core = ["flit_core >=1.2"]
+flit_core = ["flit_core ==1.2"]
