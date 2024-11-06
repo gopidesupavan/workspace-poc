@@ -1,5 +1,4 @@
 [build-system]
-requires = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
 
 [project]
@@ -11,6 +10,9 @@ dynamic = ["version", "description"]
 dependencies = [
    "ansys-templates==0.3.0",
 ]
+
+[build-system.requires]
+flit_core = ["flit_core >=1.2"]
 
 [project.optional-dependencies]
 socks = [ 'PySocks >= 1.5.6, != 1.5.7, < 2' ]
