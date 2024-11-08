@@ -1,30 +1,35 @@
-name: Monitor build-system.requires in pyproject.toml
+name: ManualDependabot
 
 on:
-  schedule:
-    - cron: '0 0 * * *'  # Adjust the schedule as necessary (5 min minimum)
-  workflow_dispatch:  # Allows manual triggering of the workflow
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
-  check-dependencies:
+  dependabot:
+    permissions:
+      contents: write  # for Git to git push
+      pull-requests: write  # for repo-sync/pull-request to create pull requests
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Display Default APT Retries
-        run: |
-          # Check the default retries value for apt
-          default_retries=$(apt-config dump | grep -i "Acquire::Retries" | awk '{print $2}')
-          
-          # Display the default retries value or a message if not set
-          if [ -z "$default_retries" ]; then
-            echo "Acquire::Retries is not set. The default is likely 0 (no retries)."
-          else
-            echo "Default retries for apt-get: $default_retries"
-          fi
-      - name: Display Full APT Configuration
-        run: |
-          echo "Dumping full APT configuration:"
-          apt-config dump
+    - name: Checkout repo
+      uses: actions/checkout@v3
+    - name: Checkout dependabot
+      run: |
+        cd /tmp/
+        git clone https://github.com/dependabot/dependabot-script
+    - name: Build image
+      run: |
+        cd /tmp/dependabot-script
+        docker build -t "dependabot/dependabot-script" -f Dockerfile .
+    - name: Run dependabot
+      env:
+        # Select your package manager
+        PACKAGE_MANAGER: pip
+        # Options can turn on extra features (not required)
+        OPTIONS: |
+           { "kubernetes_updates": true }
+        GITHUB_ACCESS_TOKEN: ${{ github.token }}
+      run: |
+        docker run -v $PWD:/src -e PROJECT_PATH=$GITHUB_REPOSITORY -e PACKAGE_MANAGER=$PACKAGE_MANAGER -e DIRECTORY=src -e GITHUB_ACCESS_TOKEN=$GITHUB_ACCESS_TOKEN -e OPTIONS="$OPTIONS" dependabot/dependabot-script
