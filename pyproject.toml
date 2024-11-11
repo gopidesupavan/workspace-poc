@@ -9,5 +9,5 @@ license = {file = "LICENSE"}
 classifiers = ["License :: OSI Approved :: MIT License"]
 dynamic = ["version", "description"]
 dependencies = [
-   "ansys-templates==0.3.0",
+   "ansys-templates==4.0.0",
 ]
