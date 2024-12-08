@@ -1,0 +1,51 @@
+name: "Example pypi publish"
+
+on:
+  workflow_dispatch:
+    inputs:
+      release-config:
+        description: 'Path to the publish config file'
+        required: true
+        default: 'release-config.yml'
+      temp-dir:
+        description: 'Temporary directory to checkout svn repo'
+        required: false
+        default: "asf-dist"
+      mode:
+        description: 'Mode to run the action'
+        required: false
+        default: 'VERIFY'
+
+jobs:
+  gh-action-pypi-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    environment: test
+    steps:
+     - name: Checkout Code
+       uses: actions/checkout@v4
+
+     - name: Setup Python
+       uses: actions/setup-python@v4
+       with:
+         python-version: '3.11'
+
+     - name: "Execute custom action"
+       uses: gopidesupavan/gh-pub@main
+       with:
+         release-config: ${{ inputs.release-config }}
+         temp-dir: ${{ inputs.temp-dir }}
+         mode: ${{ inputs.mode }}
+
+     - name: "Download release distributions for ${{ steps.config-parser.outputs.publisher-name }}"
+       uses: actions/download-artifact@v4
+       with:
+         merge-multiple: true
+         path: ./dist
+
+     - name: "Publishing ${{ steps.config-parser.outputs.publisher-name }} to PyPI"
+       uses: pypa/gh-action-pypi-publish@release/v1
+       if: inputs.mode == 'RELEASE'
+       with:
+         packages-dir: "./dist"
