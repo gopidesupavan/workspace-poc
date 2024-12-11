@@ -1,0 +1,70 @@
+name: build-docker-and-push
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+          
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: false
+          tags: my-app:latest
+          
+      - name: Build Docker image
+        run: |
+         docker save my-app:latest | gzip > my-app.tar.gz
+
+      - name: Upload Docker image as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-app-image
+          path: my-app.tar.gz
+          
+      
+  use-and-cache:
+    runs-on: ubuntu-latest
+    services:
+      registry:
+        image: registry:2
+        ports:
+          - 5000:5000
+    needs: build-and-upload
+
+    steps:
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+      
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      with:
+        driver-opts: network=host
+       
+    - name: Download Docker image artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: my-app-image
+
+    - name: Load Docker image
+      run: |
+        gunzip -c my-app.tar.gz | docker load
+
+    - name: Push to local Docker registry
+      run: |
+        docker tag my-app:latest localhost:5000/my-app:latest
+        docker push localhost:5000/my-app:latest      
+
+    - name: Build Docker image using cache
+      run: |
+        docker build --cache-from=localhost:5000/my-app:latest -t my-app:cached .
