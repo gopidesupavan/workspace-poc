@@ -16,12 +16,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
           
-      # - name: Build and push
-      #   uses: docker/build-push-action@v6
-      #   with:
-      #     push: false
-      #     tags: my-app:latest
-          
       - name: Build Docker image and push
         run: |
          docker buildx build -o - . > my-app.tar
@@ -52,12 +46,14 @@ jobs:
        
     - name: Download Docker image artifact
       uses: actions/download-artifact@v4
-      with:
-        path: .
-
+      
+    - name: Display structure of downloaded files
+      run: ls -R
+      
     - name: Load Docker image
       run: |
-        gunzip -c my-app.tar | docker load
+        docker load -i my-app.tar
+        docker images
 
     - name: Push to local Docker registry
       run: |
