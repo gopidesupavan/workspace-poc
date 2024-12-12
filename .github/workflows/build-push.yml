@@ -65,7 +65,7 @@ jobs:
       
     - name: Build Docker image using cache
       run: |
-        docker buildx build -t localhost:5000/my-app:latest2 --cache-from=type=registry,ref=my-app:latest .
+        docker buildx build --cache-from=type=registry,ref=localhost:5000/my-app:latest .
         # docker push localhost:5000/my-app:latest
         docker images
  #       docker build --cache-from=localhost:5000/my-app:latest -t my-app:cached .
