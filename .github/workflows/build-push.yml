@@ -60,9 +60,11 @@ jobs:
         docker tag my-app:latest localhost:5000/my-app:latest
         docker push localhost:5000/my-app:latest      
 
-    # - name: Build Docker image using cache
-    #   run: |
-    #     docker build --cache-from=localhost:5000/my-app:latest -t my-app:cached .
+    - name: Build Docker image using cache
+      run: |
+        docker buildx build -t my-app:latest --push localhost:5000/my-app:latest .
+        docker images
+ #       docker build --cache-from=localhost:5000/my-app:latest -t my-app:cached .
     
   pull-again:
    runs-on: ubuntu-latest
