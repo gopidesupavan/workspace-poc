@@ -63,3 +63,10 @@ jobs:
     # - name: Build Docker image using cache
     #   run: |
     #     docker build --cache-from=localhost:5000/my-app:latest -t my-app:cached .
+    
+  pull-again:
+   runs-on: ubuntu-latest
+   steps:
+    - name: Re pull image
+      run: |
+        docker images
