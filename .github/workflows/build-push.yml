@@ -62,8 +62,8 @@ jobs:
 
     - name: Build Docker image using cache
       run: |
-        docker buildx build -t my-app:latest .
-        docker push localhost:5000/my-app:latest
+        docker buildx build --push --load --pull -t my-app:latest -f Dockerfile.ci
+        # docker push localhost:5000/my-app:latest
         docker images
  #       docker build --cache-from=localhost:5000/my-app:latest -t my-app:cached .
     
