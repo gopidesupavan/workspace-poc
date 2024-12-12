@@ -66,6 +66,7 @@ jobs:
     
   pull-again:
    runs-on: ubuntu-latest
+   needs: use-and-cache
    steps:
     - name: Re pull image
       run: |
