@@ -52,7 +52,7 @@ jobs:
       
     - name: Load Docker image
       run: |
-        docker load -i my-app.tar
+        docker load -i ./artifact/my-app.tar
         docker images
 
     - name: Push to local Docker registry
