@@ -1,0 +1,32 @@
+name: build-docker-and-push-example
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ghcr.io/gopidesupavan/workspace-poc/app:latest
+            ghcr.io/gopidesupavan/workspace-poc/app:1.0.0
