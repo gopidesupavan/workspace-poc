@@ -30,3 +30,5 @@ jobs:
           tags: |
             ghcr.io/gopidesupavan/workspace-poc/app:latest
             ghcr.io/gopidesupavan/workspace-poc/app:1.0.0
+          cache-from: type=registry,ref=ghcr.io/gopidesupavan/workspace-poc/app:buildcache
+          cache-to: type=registry,ref=ghcr.io/gopidesupavan/workspace-poc/app:buildcache,mode=max
